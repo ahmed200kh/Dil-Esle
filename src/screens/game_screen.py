@@ -505,6 +505,15 @@ class GameScreen:
                     self.handle_pause_menu_click(mx, my)
                     return 
 
+                if self.state == "game_completed":
+                    # Oyun tamamlandı butonuna tıklanıp tıklanmadığını kontrol et
+                    if hasattr(self, '_game_completed_btn_rect'):
+                        sx, sy = pygame.mouse.get_pos()
+                        if self._game_completed_btn_rect.collidepoint(sx, sy):
+                            self.manager.audio.play_sound("click")
+                            self.manager.change_screen("menu")
+                            return
+
                 if self.check_menu_button(mx, my): return
                 if self.check_options_button(mx, my): 
                     self.state = "paused"
@@ -667,8 +676,15 @@ class GameScreen:
         if not self.game_won:
             remaining = [t for t in self.tiles if not t.removed and t not in self.animating_matches]
             if not remaining and not self.animating_matches:
-                self.game_won = True; self.state = "level_complete"; self.state_timer = 2.0; self.manager.audio.play_sound("win")
-                self.save_manager.advance_word_index(self.new_words_count); self.save_manager.next_level()
+                # Başka seviyeler için yeni kelimeler olup olmadığını kontrol edin
+                selected_level = getattr(self, "vocab_level", None)
+                used_word_ids = self.save_manager.get_used_word_ids()
+                # Yeni kelimeler kullanmayı dene
+                next_pairs, _, _ = self.vocab_loader.get_level_pairs(1, 0, 0, used_word_ids, start_level=selected_level)
+                if not next_pairs:
+                    self.game_won = True; self.state = "game_completed"; self.level_message = "Tebrikler! Tüm kelimeleri bitirdiniz!"; self.tutorial_text = "Oyunu başarıyla tamamladım."; self.manager.audio.play_sound("win")
+                else:
+                    self.game_won = True; self.state = "level_complete"; self.state_timer = 2.0; self.manager.audio.play_sound("win"); self.save_manager.advance_word_index(self.new_words_count); self.save_manager.next_level()
 
     def spawn_explosion(self, x, y):
         """Eşleşme anında parçacık efekti (Particle System) oluşturur."""
@@ -781,6 +797,27 @@ class GameScreen:
                 txt_surf = self.font_btn.render(fallback_txt, True, (255,255,255))
                 txt_rect = txt_surf.get_rect(center=(sx, sy))
                 surface.blit(txt_surf, txt_rect)
+
+    def draw_game_completed(self, surface):
+        # Oyunun bitiş ekranını bir mesaj ve geri dönüş düğmesiyle birlikte çizin.
+        surface.fill((30, 60, 30))
+        msg_font = self.font_big
+        text_surf = msg_font.render("Tebrikler!", True, (255, 215, 0))
+        text_rect = text_surf.get_rect(center=(SCALER.screen_w//2, SCALER.screen_h//2 - 80))
+        surface.blit(text_surf, text_rect)
+        sub_font = self.font_ui
+        sub_surf = sub_font.render("Bütün kelimeleri bitirdim ve oyunu tamamladım!", True, (255,255,255))
+        sub_rect = sub_surf.get_rect(center=(SCALER.screen_w//2, SCALER.screen_h//2))
+        surface.blit(sub_surf, sub_rect)
+        # Geri düğmesi
+        btn_w, btn_h = 320, 60
+        btn_x = (SCALER.screen_w - btn_w) // 2
+        btn_y = SCALER.screen_h//2 + 80
+        pygame.draw.rect(surface, (80, 40, 20), (btn_x, btn_y, btn_w, btn_h), border_radius=18)
+        btn_text = self.font_btn.render("Ana menüye dön", True, (255,255,255))
+        btn_text_rect = btn_text.get_rect(center=(SCALER.screen_w//2, btn_y + btn_h//2))
+        surface.blit(btn_text, btn_text_rect)
+        self._game_completed_btn_rect = pygame.Rect(btn_x, btn_y, btn_w, btn_h)
 
     def draw(self, surface):
         """
@@ -939,3 +976,6 @@ class GameScreen:
             btn_txt_surf = self.font_btn.render(btn_msg, True, (255, 255, 255))
             btn_txt_rect = btn_txt_surf.get_rect(center=action_rect.center)
             surface.blit(btn_txt_surf, btn_txt_rect)
+        
+        elif self.state == "game_completed":
+            self.draw_game_completed(surface)
