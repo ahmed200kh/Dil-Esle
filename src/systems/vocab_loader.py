@@ -74,33 +74,19 @@ class VocabLoader:
                 selected_entries.append(entry)
                 used_ids.add(entry['id'])
         
-        # 2. Tekrar (Review) Mekanizması: Öğrenilmiş havuzdan rastgele seçim
-        if review_count > 0 and start_index > 0:
-            # Daha önce geçilen kelimelerin havuzu (0'dan start_index'e kadar)
-            pool_size = min(start_index, len(self.vocab_list))
-            # Eski kelimelerden rastgele örneklem al
-            past_words = self.vocab_list[:start_index]
-            review_words = []
-            for entry in random.sample(past_words, min(len(past_words), review_count)):
-                if entry['id'] not in used_ids:
-                    review_words.append(entry)
-                    used_ids.add(entry['id'])
-            selected_entries.extend(review_words)
-            
-        # Eğer liste sonuna gelindiyse veya sayı yetersizse, rastgele takviye yap
-        while len(selected_entries) < count:
-            # Havuzdan rastgele kelime seç (Tekrarları önle)
-            extra = random.choice(self.vocab_list)
-            if extra['id'] not in used_ids:
-                selected_entries.append(extra)
-                used_ids.add(extra['id'])
-        
+        # 2. Gerekli sayı yeterli değilse, kelimeleri baştan başlayarak sırayla (tekrar etmeden) tamamlayın.
+        if len(selected_entries) < count:
+            # Kelimeleri sırayla (baştan başlayarak) gözden geçirin
+            review_candidates = [w for w in self.vocab_list if w['id'] not in used_ids]
+            needed = count - len(selected_entries)
+            selected_entries.extend(review_candidates[:needed])
+
         # Oyun motoru için çiftlerin (İngilizce - Türkçe) oluşturulması
         pairs = []
         for entry in selected_entries:
             pairs.append({'entry_id': entry['id'], 'text': entry["en"], 'lang': "en"})
             pairs.append({'entry_id': entry['id'], 'text': entry["tr"], 'lang': "tr"})
-            
+
         # Taşların oyun tahtasına rastgele dağılması için karıştır
         random.shuffle(pairs)
-        return pairs, (end_index - start_index), [entry['id'] for entry in selected_entries] # Çiftler، التقدم، معرفات الكلمات الجديدة
+        return pairs, len(selected_entries), [entry['id'] for entry in selected_entries] # Çiftler, İlerleme, Yeni Kelime Kimlikleri
