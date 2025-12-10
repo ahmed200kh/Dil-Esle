@@ -28,11 +28,11 @@ class MenuScreen:
         self.show_reset_msg = False
         self.reset_msg_timer = 0.0
         
-        # Varsayılan Oyun Ayarları
+        # Varsayılan Oyun Ayarları (veya kayıttan yükle)
         self.settings = {
             "ui_lang": "en",       # Arayüz Dili
             "target_lang": "tr",   # Öğrenilecek Dil
-            "vocab_level": "A1",   # Kelime Seviyesi (CEFR)
+            "vocab_level": self.save_manager.get_vocab_level(),   # Kaydedilmiş kelime seviyesi
             "game_diff": "Normal"  # Oyun Zorluğu
         }
         
@@ -182,6 +182,9 @@ class MenuScreen:
             self.settings[key] = options_list[new_idx]
         except ValueError:
             self.settings[key] = options_list[0]
+        # Eğer kelime seviyesi değiştiyse, kaydet
+        if key == "vocab_level":
+            self.save_manager.set_vocab_level(self.settings["vocab_level"])
 
     # --- UI Layout Hesaplama Metotları (Responsive Design) ---
     

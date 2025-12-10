@@ -13,10 +13,19 @@ class SaveManager:
             "current_level": 1,        # Mevcut oynanan seviye
             "unlocked_levels": 1,      # Kilidi açılmış maksimum seviye
             "words_learned_index": 0,  # Kelime listesindeki ilerleme durumu
-            "used_word_ids": []        # Kullanılan anahtar kelime tanımlayıcılarının listesi
+            "used_word_ids": [],       # Kullanılan anahtar kelime tanımlayıcılarının listesi
+            "vocab_level": "A1"       # Ekstra: Seçili kelime seviyesi
         }
         # Başlangıçta mevcut kayıt varsa yükle
         self.load()
+    def get_vocab_level(self):
+        """Kullanıcının seçtiği kelime seviyesini döndürür."""
+        return self.data.get("vocab_level", "A1")
+
+    def set_vocab_level(self, level):
+        """Kullanıcının seçtiği kelime seviyesini kaydeder."""
+        self.data["vocab_level"] = level
+        self.save()
 
     def load(self):
         """
@@ -84,13 +93,14 @@ class SaveManager:
 
     def reset_progress(self):
         """
-        Tüm oyun verilerini (seviye, kilitler, kelime ilerlemesi)
+        Tüm oyun verilerini (seviye, kilitler, kelime ilerlemesi, kelime seviyesi)
         varsayılan başlangıç değerlerine döndürür ve dosyayı günceller.
         """
         self.data = {
             "current_level": 1,
             "unlocked_levels": 1,
             "words_learned_index": 0,
-            "used_word_ids": []
+            "used_word_ids": [],
+            "vocab_level": "A1"
         }
         self.save()
