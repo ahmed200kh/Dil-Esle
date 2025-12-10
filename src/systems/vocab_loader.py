@@ -41,7 +41,7 @@ class VocabLoader:
         # Seviyesi belirtilmemiş kelimeler varsayılan olarak A1 kabul edilir
         self.vocab_list = sorted(all_words, key=lambda x: level_order.get(x.get("level", "A1"), 0))
 
-    def get_level_pairs(self, count, start_index, review_count=0, used_word_ids=None):
+    def get_level_pairs(self, count, start_index, review_count=0, used_word_ids=None, start_level=None):
         """
         Oyun turu için gerekli kelime çiftlerini oluşturur.
         Aralıklı tekrar (Spaced Repetition) prensibini uygulayarak yeni kelimelerle
@@ -51,7 +51,8 @@ class VocabLoader:
             count: Toplam oluşturulacak çift sayısı.
             start_index: Yeni kelimelerin alınmaya başlanacağı indeks (İlerleme durumu).
             review_count: Önceki kelimelerden kaç tanesinin tekrar edileceği.
-           used_word_ids: Daha before used (kullanılan kelime kimliklerinin listesi)
+            used_word_ids: Daha before used (kullanılan kelime kimliklerinin listesi)
+           start_level: Kullanıcının seviye seçimi ("A1", "A2", ...)
         """
         total_available = len(self.vocab_list)
         if total_available == 0: return []
@@ -59,27 +60,47 @@ class VocabLoader:
         # 1. Yeni öğrenilecek kelime sayısının hesaplanması
         new_words_needed = count - review_count
         if new_words_needed < 0: new_words_needed = 0
-        
+
+        # Başlangıç ​​seviyesini uygula (ör: A2), sadece bu seviye ve ötesindeki kelimeler
+        start_idx = 0
+        if start_level is not None:
+            level_order = {"A1": 0, "A2": 1, "B1": 2, "B2": 3, "C1": 4, "C2": 5}
+            min_level = level_order.get(start_level, 0)
+            for idx, w in enumerate(self.vocab_list):
+                if level_order.get(w.get("level", "A1"), 0) >= min_level:
+                    start_idx = idx
+                    break
+        else:
+            start_idx = start_index
+
         # Daha önce kullanılan kelimeleri hariç tut
         if used_word_ids is None:
             used_word_ids = set()
         else:
             used_word_ids = set(used_word_ids)
-        end_index = min(start_index + new_words_needed, total_available)
+        end_index = min(start_idx + new_words_needed, total_available)
         selected_entries = []
         used_ids = set(used_word_ids)
-        for i in range(start_index, end_index):
+        for i in range(start_idx, end_index):
             entry = self.vocab_list[i]
             if entry['id'] not in used_ids:
                 selected_entries.append(entry)
                 used_ids.add(entry['id'])
         
-        # 2. Gerekli sayı yeterli değilse, kelimeleri baştan başlayarak sırayla (tekrar etmeden) tamamlayın.
+        #2. Gerekli sayı yeterli değilse, seçilen seviyedeki veya daha üst seviyedeki kelimelerle tamamlayın.
         if len(selected_entries) < count:
-            # Kelimeleri sırayla (baştan başlayarak) gözden geçirin
-            review_candidates = [w for w in self.vocab_list if w['id'] not in used_ids]
+            if start_level is not None:
+                level_order = {"A1": 0, "A2": 1, "B1": 2, "B2": 3, "C1": 4, "C2": 5}
+                min_level = level_order.get(start_level, 0)
+                review_candidates = [w for w in self.vocab_list if w['id'] not in used_ids and level_order.get(w.get("level", "A1"), 0) >= min_level]
+            else:
+                review_candidates = [w for w in self.vocab_list if w['id'] not in used_ids]
             needed = count - len(selected_entries)
             selected_entries.extend(review_candidates[:needed])
+
+        # Seçilen seviyede veya daha üst seviyede hiç kelime bulunmuyorsa, oyun sonu mesajını döndürün.
+        if not selected_entries:
+            return [], 0, []
 
         # Oyun motoru için çiftlerin (İngilizce - Türkçe) oluşturulması
         pairs = []

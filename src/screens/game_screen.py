@@ -204,7 +204,8 @@ class GameScreen:
 
         # Kelime verisinin uygun çiftleri, kullanılan kelimeler hariç tutularak çek
         used_word_ids = self.save_manager.get_used_word_ids()
-        self.current_pairs, self.new_words_count, new_ids = self.vocab_loader.get_level_pairs(pair_count, word_index, review_count, used_word_ids)
+        selected_level = getattr(self, "vocab_level", None)
+        self.current_pairs, self.new_words_count, new_ids = self.vocab_loader.get_level_pairs(pair_count, word_index, review_count, used_word_ids, start_level=selected_level)
         # Kullanılan kelimeler listesini güncelle
         self.save_manager.add_used_word_ids(new_ids)
         
