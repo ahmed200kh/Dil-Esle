@@ -116,11 +116,12 @@ class GameScreen:
         """
         Eşleşen taş çiftleri için benzersiz görsel semboller (şekil + renk) üretir.
         Bu, renk körü kullanıcılar veya görsel hafıza desteği için kullanılır.
+        ÖNEMLI: Renkler SABIT SIRADA, rastgele değil. Her entry_id her zaman aynı sembolü alır.
         """
         shapes = [
-            'circle', 'square', 'triangle', 'diamond', 'cross', 'star', 
-            'pentagon', 'hexagon', 'ring', 'inv_triangle', 'hourglass', 
-            'box_cross', 'plus', 'target', 'bar', 'moon', 'rhombus', 'grid'
+            'circle', 'square', 'triangle', 'cross', 'star', 
+            'pentagon', 'hexagon', 'ring','hourglass', 
+            'bar', 'moon', 'grid'
         ]
         colors = [
             (255, 0, 0),      # Red
@@ -135,15 +136,13 @@ class GameScreen:
             (101, 67, 33)     # Brown
         ]
         # Tüm olası kombinasyonları oluştur (Cartesian Product)
+        # SABİT SIRA - random.shuffle YAPMA!
         all_combinations = []
         for s in shapes:
             for c in colors:
                 all_combinations.append({'shape': s, 'color': c})
         
-        # Rastgelelik sağlamak için karıştır
-        random.shuffle(all_combinations)
-        
-        # İstenilen sayıda sembolü döndür (yetmezse döngüsel olarak tekrarla)
+        # İstenilen sayıda sembolü döndür (rastgele değil, sabit sırada)
         if pair_count > len(all_combinations): 
             return all_combinations + all_combinations[:pair_count-len(all_combinations)]
         return all_combinations[:pair_count]
@@ -208,7 +207,7 @@ class GameScreen:
         self.current_pairs, self.new_words_count, new_ids = self.vocab_loader.get_level_pairs(pair_count, word_index, review_count, used_word_ids, start_level=selected_level)
         # Kullanılan kelimeler listesini güncelle
         self.save_manager.add_used_word_ids(new_ids)
-        
+     
         # Sembolleri kelime ID'lerine eşle
         unique_ids = []
         seen = set()
