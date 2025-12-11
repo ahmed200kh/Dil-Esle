@@ -73,6 +73,12 @@ class MenuScreen:
         }
 
         self.banner_img = None
+        # Arka plan resmi yükle (Background0)
+        bg_path = os.path.join("assets", "images", "Background0.png")
+        if os.path.exists(bg_path):
+            self.bg_image = pygame.image.load(bg_path).convert()
+        else:
+            self.bg_image = None
         self.load_assets()
 
     def load_assets(self):
@@ -257,14 +263,19 @@ class MenuScreen:
 
     def draw(self, surface):
         """Ekranın tamamını (Arka plan ve UI elemanları) render eder."""
-        # Degrade Arka Plan Çizimi
-        surface.fill(COLORS["bg_gradient_bot"])
-        for y in range(0, SCALER.screen_h, 2): 
-            ratio = y / SCALER.screen_h
-            r = int(COLORS["bg_gradient_top"][0] * (1-ratio) + COLORS["bg_gradient_bot"][0] * ratio)
-            g = int(COLORS["bg_gradient_top"][1] * (1-ratio) + COLORS["bg_gradient_bot"][1] * ratio)
-            b = int(COLORS["bg_gradient_top"][2] * (1-ratio) + COLORS["bg_gradient_bot"][2] * ratio)
-            pygame.draw.line(surface, (r,g,b), (0, y), (SCALER.screen_w, y), 2)
+        # Arka plan resmi (Background0)
+        if hasattr(self, 'bg_image') and self.bg_image:
+            bg_scaled = pygame.transform.scale(self.bg_image, (SCALER.screen_w, SCALER.screen_h))
+            surface.blit(bg_scaled, (0, 0))
+        else:
+            # Degrade Arka Plan (fallback)
+            surface.fill(COLORS["bg_gradient_bot"])
+            for y in range(0, SCALER.screen_h, 2): 
+                ratio = y / SCALER.screen_h
+                r = int(COLORS["bg_gradient_top"][0] * (1-ratio) + COLORS["bg_gradient_bot"][0] * ratio)
+                g = int(COLORS["bg_gradient_top"][1] * (1-ratio) + COLORS["bg_gradient_bot"][1] * ratio)
+                b = int(COLORS["bg_gradient_top"][2] * (1-ratio) + COLORS["bg_gradient_bot"][2] * ratio)
+                pygame.draw.line(surface, (r,g,b), (0, y), (SCALER.screen_w, y), 2)
         
         # Duruma göre içerik çizimi
         if self.current_state == "main":
