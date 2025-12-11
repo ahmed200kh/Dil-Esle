@@ -32,13 +32,11 @@ class MenuScreen:
         self.settings = {
             "ui_lang": "en",       # Arayüz Dili
             "target_lang": "tr",   # Öğrenilecek Dil
-            "vocab_level": self.save_manager.get_vocab_level(),   # Kaydedilmiş kelime seviyesi
-            "game_diff": "Normal"  # Oyun Zorluğu
+            "vocab_level": self.save_manager.get_vocab_level()   # Kaydedilmiş kelime seviyesi
         }
         
         # Ayar Seçenekleri Listesi
         self.options_vocab = ["A1", "A2", "B1", "B2", "C1", "C2"]
-        self.options_diff = ["Easy", "Normal", "Hard"]
         self.options_ui_lang = ["en", "tr"]
         self.options_target_lang = ["en", "tr"]
 
@@ -52,7 +50,6 @@ class MenuScreen:
                 "lbl_ui": "Interface Language:",
                 "lbl_target": "Learning Language:",
                 "lbl_vocab": "Vocabulary Level:",
-                "lbl_diff": "Game Difficulty:",
                 "reset": "RESET PROGRESS",
                 "reset_done": "Progress Reset!", # Geri bildirim mesajı
                 "back": "BACK"
@@ -65,7 +62,6 @@ class MenuScreen:
                 "lbl_ui": "Arayüz Dili:",
                 "lbl_target": "Öğrenilen Dil:",
                 "lbl_vocab": "Kelime Seviyesi:",
-                "lbl_diff": "Oyun Zorluğu:",
                 "reset": "İLERLEMEYİ SIFIRLA",
                 "reset_done": "İlerleme Sıfırlandı!", # Geri bildirim mesajı
                 "back": "GERİ"
@@ -126,7 +122,7 @@ class MenuScreen:
             self.manager.screens["game"].set_config(
                 native_lang=native,
                 target_lang=self.settings["target_lang"],
-                diff=self.settings["game_diff"],
+                diff="Normal",
                 vocab_lvl=self.settings["vocab_level"]
             )
             self.manager.change_screen("game")
@@ -159,11 +155,6 @@ class MenuScreen:
         elif self.get_setting_rect(2).collidepoint(mx, my):
             self.manager.audio.play_sound("click")
             self.toggle_setting("vocab_level", self.options_vocab)
-            
-        # Zorluk Seviyesi Değiştirme
-        elif self.get_setting_rect(3).collidepoint(mx, my):
-            self.manager.audio.play_sound("click")
-            self.toggle_setting("game_diff", self.options_diff)
             
         # İlerlemeyi Sıfırla Butonu (Kritik İşlem)
         elif self.get_reset_rect().collidepoint(mx, my):
@@ -210,7 +201,7 @@ class MenuScreen:
         """Sıfırlama butonunun konumunu hesaplar."""
         center_x = SCALER.screen_w // 2
         start_y = SCALER.screen_h // 2 - 120
-        return pygame.Rect(center_x - 125, start_y + (4 * 70) + 20, 250, 60)
+        return pygame.Rect(center_x - 125, start_y + (3 * 70) + 20, 250, 60)
 
     def get_back_rect(self):
         """Geri dön butonunun konumunu hesaplar."""
@@ -331,8 +322,7 @@ class MenuScreen:
         items = [
             ("lbl_ui", "ui_lang"),
             ("lbl_target", "target_lang"),
-            ("lbl_vocab", "vocab_level"),
-            ("lbl_diff", "game_diff")
+            ("lbl_vocab", "vocab_level")
         ]
         
         start_y = SCALER.screen_h // 2 - 120

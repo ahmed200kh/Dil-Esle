@@ -5,7 +5,7 @@ from src.screens.menu_screen import MenuScreen
 from src.screens.game_screen import GameScreen
 from src.systems.audio import AudioSystem
 
-class MahjongGame:
+class DilEsleGame:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption("Dil Eşle")
@@ -56,5 +56,5 @@ class MahjongGame:
         sys.exit()
 
 if __name__ == "__main__":
-    app = MahjongGame()
+    app = DilEsleGame()
     app.run()
