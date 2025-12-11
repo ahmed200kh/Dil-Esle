@@ -205,8 +205,7 @@ class GameScreen:
         used_word_ids = self.save_manager.get_used_word_ids()
         selected_level = getattr(self, "vocab_level", None)
         self.current_pairs, self.new_words_count, new_ids = self.vocab_loader.get_level_pairs(pair_count, word_index, review_count, used_word_ids, start_level=selected_level)
-        # Kullanılan kelimeler listesini güncelle
-        self.save_manager.add_used_word_ids(new_ids)
+        # Not: Kullanılan kelimeler sadece seviye tamamlanınca güncellenir
      
         # Sembolleri kelime ID'lerine eşle
         unique_ids = []
@@ -683,7 +682,7 @@ class GameScreen:
                 if not next_pairs:
                     self.game_won = True; self.state = "game_completed"; self.level_message = "Tebrikler! Tüm kelimeleri bitirdiniz!"; self.tutorial_text = "Oyunu başarıyla tamamladım."; self.manager.audio.play_sound("win")
                 else:
-                    self.game_won = True; self.state = "level_complete"; self.state_timer = 2.0; self.manager.audio.play_sound("win"); self.save_manager.advance_word_index(self.new_words_count); self.save_manager.next_level()
+                    self.game_won = True; self.state = "level_complete"; self.state_timer = 2.0; self.manager.audio.play_sound("win"); self.save_manager.advance_word_index(self.new_words_count); self.save_manager.next_level(); self.save_manager.add_used_word_ids([p['entry_id'] for p in self.current_pairs if 'entry_id' in p])
 
     def spawn_explosion(self, x, y):
         """Eşleşme anında parçacık efekti (Particle System) oluşturur."""
