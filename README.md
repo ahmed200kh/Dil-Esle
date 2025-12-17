@@ -10,7 +10,7 @@ Her seviye, oyuncunun dil bilgisi gelişimine paralel olarak zorlaşır ve kalı
 - **🧠 Stratejik Görsel Hafıza:** Kelimeleri sadece okuyarak değil, 3 boyutlu bir düzlemde stratejik olarak eşleştirerek öğretir.
 - **📈 Adaptif Zorluk Sistemi:** Kelime veritabanı, Avrupa Dilleri Ortak Çerçeve Programı'na (CEFR) göre **A1'den C2'ye** kadar sıralanmıştır ve oyuncunun ilerlemesine göre zorlaşır.
 - **🔊 Akıllı Ses Sentezi (TTS):** Google TTS teknolojisini kullanarak kelimelerin telaffuzunu anlık oluşturur. Çoklu iş parçacığı sayesinde oyun akışı kesintiye uğramaz.
-- **🎛️ Algoritmik Bölüm Tasarımı:** Her seviye, özel algoritmalarla sıfırdan oluşturulur; blokların dizilimi her oyunda farklıdır, ezberciliği önler.
+- **🎛️ Algoritmik Bölüm Tasarımı:** Her seviye, özel algoritmalarla sıfırdan oluşturulur; blokların dizilimi her oyunda farklıdır.
 - **📱 Duyarlı Arayüz:** Özel ölçeklendirme motoru ile oyun, her türlü ekran çözünürlüğüne otomatik uyum sağlar.
 
 ---
@@ -69,32 +69,37 @@ Dil Eşle/
 │   │   └── tts_manager.py     # Metin okuma (Text-to-Speech)
 │   └── utils/
 │       └── text_utils.py      # Metin işleme yardımcı fonksiyonları
-├── assets/
-│   ├── fonts/                 # Yazı tipleri
-│   ├── images/                # Görsel varlıkları
-│   └── sounds/                # Ses dosyaları
-└── tests/
-    └── test_logic.py          # Birim testler
+└── assets/
+    ├── fonts/                 # Yazı tipleri
+    ├── images/                # Görsel varlıkları
+    └── sounds/                # Ses dosyaları
+
 
 ```
 
-## ⚙️ Kurulum ve Başlangıç
+## ⚙️ Kurulum ve Çalıştırma
 
-1. **Gereksinimleri Yükleyin:**
-   Python yüklü olduğundan emin olun ve terminalde çalıştırın:
+### 1️⃣ Projeyi Bilgisayarınıza İndirin (Clone)
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+git clone https://github.com/ahmed200kh/Dil-Esle.git
+cd Dil-Esle
+```
 
-   _(Gerekli kütüphaneler: `pygame`, `gTTS`, `pytest`)_
+### 2️⃣ Gerekli Kütüphaneleri Yükleyin
 
-2. **Oyunu Başlatın:**
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   python main.py
-   ```
+_Gerekli kütüphaneler:_
+`pygame`, `gTTS`, `pytest`
 
----
+### 3️⃣ Oyunu Başlatın
 
-İyi Eğlenceler! :)
+```bash
+python main.py
+```
+
+📌 Bu proje, İskenderun Teknik Üniversitesi Bilgisayar Mühendisliği bölümünde verilen
+MÜHENDİSLİKTE BİLGİSAYAR UYGULAMALARI I dersi kapsamında geliştirilmiştir.
