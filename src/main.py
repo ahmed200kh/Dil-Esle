@@ -10,8 +10,16 @@ class DilEsleGame:
         pygame.init()
         pygame.display.set_caption("Dil Eşle")
         
+        # Tam ekran boyutlarını otomatik olarak elde et
+        info = pygame.display.Info()
+        screen_width = info.current_w
+        screen_height = info.current_h
+        
+        # Yeni boyutlarla SCALER boyutlarını ayarlama
+        SCALER.update_dimensions(screen_width, screen_height)
+        
         # Pencere ayarları
-        self.screen = pygame.display.set_mode((SCALER.screen_w, SCALER.screen_h), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
         

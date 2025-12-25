@@ -79,23 +79,26 @@ Dil Eşle/
 
 ## ⚙️ Kurulum ve Çalıştırma
 
-### 1️⃣ Projeyi Bilgisayarınıza İndirin (Clone)
+### 1 Python yüklü olduğundan emin olun
+   https://www.python.org/downloads/release/python-3119/
+
+### 2 Projeyi Bilgisayarınıza İndirin (Clone)
 
 ```bash
 git clone https://github.com/ahmed200kh/Dil-Esle.git
 cd Dil-Esle
 ```
 
-### 2️⃣ Gerekli Kütüphaneleri Yükleyin
+### 3 Gerekli Kütüphaneleri Yükleyin
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 _Gerekli kütüphaneler:_
 `pygame`, `gTTS`, `pytest`
 
-### 3️⃣ Oyunu Başlatın
+### 4 Oyunu Başlatın
 
 ```bash
 python main.py
