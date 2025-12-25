@@ -687,9 +687,13 @@ class GameScreen:
     def spawn_explosion(self, x, y):
         """Eşleşme anında parçacık efekti (Particle System) oluşturur."""
         colors = [(255, 255, 255), (255, 255, 255), (255, 255, 240), (255, 215, 0), (200, 200, 200)]
+        # x ve y tasarım koordinatlarıdır.
+        # Küpün tam ortasına bir patlama ekle.
+        center_x = x + Tile.WIDTH // 2
+        center_y = y + Tile.HEIGHT // 2
         for _ in range(30): 
             col = random.choice(colors)
-            self.particles.append(Particle(x + random.randint(0, 80), y + random.randint(0, 100), col))
+            self.particles.append(Particle(center_x + random.randint(-40, 40), center_y + random.randint(-50, 50), col))
 
     def update(self, dt):
         """
